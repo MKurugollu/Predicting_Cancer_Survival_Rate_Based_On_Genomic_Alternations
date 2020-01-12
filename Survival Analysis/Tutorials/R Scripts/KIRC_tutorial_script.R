@@ -181,6 +181,11 @@ s1 <- tryCatch(survdiff(Surv(as.numeric(as.character(all_clin$new_death))[ind_cl
 
 pv <- ifelse ( is.na(s1),next,(round(1 - pchisq(s1$chisq, length(s1$n) - 1),3)))[[1]]
 
+p.val <- 1 - pchisq(sdf$chisq, length(sdf$n) - 1)
+
+print(s1)
+print(s)
+
 plot(survfit(Surv(as.numeric(as.character(all_clin$new_death))[ind_clin],all_clin$death_event[ind_clin])~event_rna[ind_gene,ind_tum]),
      col=c(1:3), frame=F, lwd=2,main=paste('KIRK',rownames(z_rna)[ind_gene],sep='\n'))
 
@@ -198,3 +203,16 @@ if(x1 != 'NA' & x2 != 'NA'){
 legend(1800,0.995,legend=paste('p.value = ',pv[[1]],sep=''),bty='n',cex=1.4)
 legend(max(as.numeric(as.character(all_clin$death_days)[ind_clin]),na.rm = T)*0.7,0.94,
        legend=c(paste('NotAltered=',x1),paste('Altered=',x2)),bty='n',cex=1.3,lwd=3,col=c('black','red'))
+
+for(i in rownames(z_rna)){
+  if(i != "?"){
+    print(i)
+    ind_gene <- which(rownames(z_rna) == i)
+    s <- survfit(Surv(as.numeric(as.character(all_clin$new_death))[ind_clin],all_clin$death_event[ind_clin])~event_rna[ind_gene,ind_tum])
+    s1 <- tryCatch(survdiff(Surv(as.numeric(as.character(all_clin$new_death))[ind_clin],all_clin$death_event[ind_clin])~event_rna[ind_gene,ind_tum]), error = function(e) return(NA))
+    
+    pv <- ifelse ( is.na(s1),next,(round(1 - pchisq(s1$chisq, length(s1$n) - 1),3)))[[1]]
+    print(s1)
+    print(pv)
+  }
+}
